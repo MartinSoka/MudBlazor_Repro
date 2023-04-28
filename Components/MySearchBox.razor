@@ -1,0 +1,45 @@
+﻿@using MudExtensions
+
+<MudSelectExtended
+    @ref="mudSelect"
+    Text=""
+    Placeholder="This text shoudln't change"
+    ToStringFunc="@(i=> ItemDisplay(i, AllItems ))"
+    MultiSelection="true"
+    ItemCollection="@AllItems"
+    SearchBox="true"
+    SearchBoxAutoFocus="true"
+    SelectedValuesChanged="@((IEnumerable<Item> value) => HandleSelectionChanged())"
+    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Text"
+    SearchBoxClearable="true"
+    AdornmentIcon="@Icons.Material.Filled.Search">
+
+    @foreach (var item in AllItems)
+    {
+        <MudSelectItemExtended Value="item">@item.Title</MudSelectItemExtended>
+    }
+</MudSelectExtended>
+
+@code {
+
+    [Parameter] public List<Item> AllItems{ get; set; }
+
+    [Parameter] public IEnumerable<Item> SelectedItems { get; set; }
+
+    [Parameter] public EventCallback<IEnumerable<Item>> SelectedItemsChanged { get; set; }
+
+    private MudSelectExtended<Item> mudSelect;
+
+
+    private string ItemDisplay(Item item, IEnumerable<Item> items)
+    {
+        var i = items.FirstOrDefault(i => i.Title == item.Title);
+
+        return i == null ? "!Not Found!" : $"{i.Title}";
+    }
+
+    private async Task HandleSelectionChanged()
+    {
+        await SelectedItemsChanged.InvokeAsync(mudSelect.SelectedValues);
+    }
+}

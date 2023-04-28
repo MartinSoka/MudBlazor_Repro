@@ -1,0 +1,27 @@
+﻿@page "/"
+@using TestApp.Components
+
+<MudChipSet MultiSelection="true" AllClosable="true" OnClose="UpdateItems">
+    @foreach (var selecteItem in Model.SeletedItems)
+    {
+        <MudChip Text="@selecteItem.Title"></MudChip>
+    }
+</MudChipSet>
+
+<MySearchBox AllItems="@AllItems" SelectedItems="@Model.SeletedItems" SelectedItemsChanged="@((IEnumerable<Item> selectedValues) => Model.SeletedItems = selectedValues)" />
+
+@code {
+    public List<Item> AllItems { get; set; } = new List<Item> { new Item { Title = "someTitle" }, new Item { Title = "otherTitle" } };
+
+    public void UpdateItems(MudChip chip)
+    {
+        Model.SeletedItems = Model.SeletedItems.Where(l => l.Title != chip.Text).ToList();
+        StateHasChanged();
+    }
+
+    public static class Model
+    {
+        public static IEnumerable<Item> SeletedItems { get; set; } = new HashSet<Item>();
+    }
+
+}
